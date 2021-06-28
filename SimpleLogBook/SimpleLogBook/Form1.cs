@@ -14,14 +14,13 @@ namespace SimpleLogBook
 {
     public partial class Form1 : Form
     {
-//        private String WorkDir = String.Empty;
         public Form1()
         {
             InitializeComponent();
             Utils utils = new Utils();
+            this.Text = "Log for " + utils.GetMyCallSign();
             this.toolStripStatusLabel1.Text = utils.GetDataFile();
             this.FillDataGrid();
-
         }
 
         private void FillDataGrid()
@@ -50,7 +49,7 @@ namespace SimpleLogBook
             conn = util.OpenDatabase();
 
             cmd = new SQLiteCommand(conn);
-            cmd.CommandText = "SELECT * FROM ENTRY ORDER BY ENTRY_DATE";
+            cmd.CommandText = "SELECT * FROM ENTRY ORDER BY ENTRY_DATE DESC";
 
                         rdr = cmd.ExecuteReader();
                         if(rdr.HasRows)

@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -109,6 +110,8 @@ namespace SimpleLogBook
                 {
                     con = this.OpenDatabase();
 
+                    String myCallSign = ConfigurationManager.AppSettings.Get("MyCallSign");
+
                     cmd = new SQLiteCommand(con);
                     cmd.CommandText = "CREATE TABLE ENTRY (ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, ENTRY_DATE TIMESTAMP NOT NULL, CALLSIGN_OUT VARCHAR(255), CALLSIGN_IN VARCHAR(255) NOT NULL, FREQUENCY DECIMAL(10,4) NOT NULL DEFAULT 1.0, MODE VARCHAR(32) NULL, POWER INTEGER NOT NULL DEFAULT 0, SIGNAL_IN VARCHAR(32) NULL, SIGNAL_OUT VARCHAR(32) NULL, CONTACT_NAME VARCHAR(255) NULL, CONTACT_LOC VARCHAR(255) NULL, COMMENT VARCHAR(255) NULL)";
                     cmd.ExecuteNonQuery();
@@ -118,57 +121,47 @@ namespace SimpleLogBook
                     cmd.ExecuteNonQuery();
                     cmd.CommandText = "CREATE INDEX IX_ENTRY_003 ON ENTRY(CALLSIGN_IN)";
                     cmd.ExecuteNonQuery();
-                    cmd.CommandText = "INSERT INTO ENTRY(ENTRY_DATE, CALLSIGN_OUT, CALLSIGN_IN, FREQUENCY, MODE, POWER, SIGNAL_IN, SIGNAL_OUT, CONTACT_NAME, CONTACT_LOC, COMMENT) VALUES(@Date, @CallOut, @CallIn, @Freq, @Mode, @Power, @SigIn, @SigOut, @Name, @Location, @Comment)";
-                    SQLiteParameter ParamEd = new SQLiteParameter("@Date", System.Data.DbType.DateTime);
-                    ParamEd.Value = DateTime.UtcNow;
-                    SQLiteParameter ParamCso = new SQLiteParameter("@CallOut", System.Data.DbType.String);
-                    ParamCso.Value = "VK2MEI";
-                    SQLiteParameter ParamCsi = new SQLiteParameter("@CallIn", System.Data.DbType.String);
-                    ParamCsi.Value = "VK2DAY";
-                    SQLiteParameter ParamFreq = new SQLiteParameter("@Freq", System.Data.DbType.Decimal);
-                    ParamFreq.Value = Convert.ToDouble(14.123);
-                    SQLiteParameter ParamMode = new SQLiteParameter("@Mode", System.Data.DbType.String);
-                    ParamMode.Value = "USB";
-                    SQLiteParameter ParamPower = new SQLiteParameter("@Power", System.Data.DbType.Int32);
-                    ParamPower.Value = Convert.ToInt32(10);
-                    SQLiteParameter ParamSi = new SQLiteParameter("@SigIn", System.Data.DbType.String);
-                    ParamSi.Value = "S9R5";
-                    SQLiteParameter ParamSo = new SQLiteParameter("@SigOut", System.Data.DbType.String);
-                    ParamSo.Value = "S6R5";
-                    SQLiteParameter ParamName = new SQLiteParameter("@Name", System.Data.DbType.String);
-                    ParamName.Value = "Bob";
-                    SQLiteParameter ParamLoc = new SQLiteParameter("@Location", System.Data.DbType.String);
-                    ParamLoc.Value = "Hornsby";
-                    SQLiteParameter ParamComment = new SQLiteParameter("@Comment", System.Data.DbType.String);
-                    ParamComment.Value = "1st Contact";
 
-                    cmd.Parameters.Add(ParamEd);
-                    cmd.Parameters.Add(ParamCso);
-                    cmd.Parameters.Add(ParamCsi);
-                    cmd.Parameters.Add(ParamFreq);
-                    cmd.Parameters.Add(ParamMode);
-                    cmd.Parameters.Add(ParamPower);
-                    cmd.Parameters.Add(ParamSi);
-                    cmd.Parameters.Add(ParamSo);
-                    cmd.Parameters.Add(ParamName);
-                    cmd.Parameters.Add(ParamLoc);
-                    cmd.Parameters.Add(ParamComment);
+                    LogEntry le = new LogEntry(myCallSign);
+                    le.EntryDate = DateTime.UtcNow;
+                    le.CallSignOut = myCallSign;
+                    le.CallSignIn = "VK2DAY";
+                    le.Frequency = Convert.ToDouble(14.123);
+                    le.Mode = "USB";
+                    le.Power = Convert.ToInt32(10);
+                    le.SignalIn = "S9R5";
+                    le.SignalOut = "S6R5";
+                    le.RemoteName = "Rod";
+                    le.RemoteLocation = "Hornsby";
+                    le.Comments = "1st Contact";
+                    le.Save();
 
-                    cmd.Prepare();
-                    cmd.ExecuteNonQuery();
-
-                    cmd.Dispose();
-
-                    con.Close();
-                    con.Dispose();
+                    le.EntryDate = DateTime.UtcNow;
+                    le.CallSignOut = myCallSign;
+                    le.CallSignIn = "VK2AOR";
+                    le.Frequency = Convert.ToDouble(7.456);
+                    le.Mode = "USB";
+                    le.Power = Convert.ToInt32(10);
+                    le.SignalIn = "S8R5";
+                    le.SignalOut = "S5R4";
+                    le.RemoteName = "Bob";
+                    le.RemoteLocation = "Gosford";
+                    le.Comments = "Not a real entry";
+                    le.Save();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message.ToString(), "Error Connecting to database engine", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
 
             return ret;
+        }
+
+        public String GetMyCallSign()
+        {
+            String CallSign = ConfigurationManager.AppSettings.Get("MyCallSign");
+            return CallSign;
         }
     }
 }
