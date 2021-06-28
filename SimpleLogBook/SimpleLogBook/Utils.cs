@@ -1,5 +1,12 @@
-﻿using System;
+﻿/*
+ * Copyright 2021, Christopher F. Moran
+ * 
+ * This application uses the SQLite3 library for .Net, which
+ * has it's own license.  Please refer to https://sqlite.org
+ */ 
+using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -60,8 +67,24 @@ namespace SimpleLogBook
         public Boolean CreateDatabaseFile()
         {
             Boolean ret = true;
+            String ConnectionString = null;
+
+            // At the moment, this does nothing.  But one day we will use the settings in this module ONLY
+            // if an invalid file path is present.
+            ConnectionStringSettingsCollection settings = ConfigurationManager.ConnectionStrings;
+            if(settings != null)        // Reading app.config succeeded
+            {
+                if(settings.Count == 0) // But there's no valid entry
+                    ConnectionString = @"Data Source=" + this.GetDataFile() + "; Version=3; FailIfMissing=False; ForeignKeys=True";
+
+            }
+            else
+            {
+                MessageBox.Show("settings is NULL", "ConnectionString", MessageBoxButtons.OK);
+                ConnectionString = @"Data Source=" + this.GetDataFile() + "; Version=3; FailIfMissing=False; ForeignKeys=True";
+            }
+
             
-            String ConnectionString = @"Data Source=" + this.GetDataFile() + "; Version=3; FailIfMissing=False; ForeignKeys=True";
             SQLiteConnection con = null;
             SQLiteCommand cmd = null;
 
