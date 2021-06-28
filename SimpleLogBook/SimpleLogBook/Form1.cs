@@ -12,17 +12,14 @@ namespace SimpleLogBook
 {
     public partial class Form1 : Form
     {
-        private String WorkDir = String.Empty;
+//        private String WorkDir = String.Empty;
         public Form1()
         {
             InitializeComponent();
             Utils utils = new Utils();
-            WorkDir = utils.GetDataDir();
-            utils.CreateDataDir(WorkDir);
-
+            String WorkDir = utils.GetDataDir();
             this.toolStripStatusLabel1.Text = WorkDir;
 
-            utils.CreateDatabaseFile();
         }
     }
 }

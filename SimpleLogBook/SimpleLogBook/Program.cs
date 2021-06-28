@@ -13,6 +13,14 @@ namespace SimpleLogBook
         [STAThread]
         static void Main()
         {
+            String WorkDir = String.Empty;
+
+            Utils utils = new Utils(); 
+            WorkDir = utils.GetDataDir();
+            utils.CreateDataDir(WorkDir);
+            utils.CreateDatabaseFile();
+
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
