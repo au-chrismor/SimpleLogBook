@@ -1,4 +1,5 @@
 SimpleLogBook/.vs/*
 SimpleLogBook/SimpleLogBook/bin/*
 SimpleLogBook/SimpleLogBook/obj/*
+SimpleLogBook/SimpleLogBook/obj/Debug/*
 SimpleLogBook/packages/*
