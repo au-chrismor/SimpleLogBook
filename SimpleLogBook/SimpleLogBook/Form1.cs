@@ -17,8 +17,7 @@ namespace SimpleLogBook
         {
             InitializeComponent();
             Utils utils = new Utils();
-            String WorkDir = utils.GetDataDir();
-            this.toolStripStatusLabel1.Text = WorkDir;
+            this.toolStripStatusLabel1.Text = utils.GetDataFile();
 
         }
     }

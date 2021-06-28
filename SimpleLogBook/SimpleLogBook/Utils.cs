@@ -51,15 +51,21 @@ namespace SimpleLogBook
             return DataDir;
         }
 
+        public String GetDataFile()
+        {
+            String DataFile = this.GetDataDir() + "\\" + "Logbook.db";
+            return DataFile;
+        }
+
         public Boolean CreateDatabaseFile()
         {
             Boolean ret = true;
-            String DataFile = this.GetDataDir() + "\\" + "Logbook.db";
-            String ConnectionString = @"Data Source=" + DataFile + "; Version=3; FailIfMissing=False; ForeignKeys=True";
+            
+            String ConnectionString = @"Data Source=" + this.GetDataFile() + "; Version=3; FailIfMissing=False; ForeignKeys=True";
             SQLiteConnection con = null;
             SQLiteCommand cmd = null;
 
-            if (!File.Exists(DataFile))
+            if (!File.Exists(this.GetDataFile()))
             {
                 try
                 {
