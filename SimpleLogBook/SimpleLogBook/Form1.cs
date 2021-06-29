@@ -28,6 +28,8 @@ namespace SimpleLogBook
             SQLiteConnection conn = null;
             SQLiteCommand cmd = null;
             SQLiteDataReader rdr = null;
+            DateTime parsedDate;
+            String[] dtFormats = { "dd/MM/yyyy hh:mm:ss tt" };
 
             this.dataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.Navy;
             this.dataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
@@ -58,7 +60,11 @@ namespace SimpleLogBook
                             {
                                 DataGridViewRow newRow = new DataGridViewRow();
                                 newRow.CreateCells(this.dataGridView1);
-                                newRow.Cells[0].Value = rdr["ENTRY_DATE"].ToString();
+                                String strDate = rdr["ENTRY_DATE"].ToString();
+                                if (DateTime.TryParseExact(strDate, dtFormats, null, System.Globalization.DateTimeStyles.AllowWhiteSpaces | System.Globalization.DateTimeStyles.AdjustToUniversal, out parsedDate))
+                                    newRow.Cells[0].Value = parsedDate.ToShortDateString();
+                                else
+                                    newRow.Cells[0].Value = rdr["ENTRY_DATE"].ToString();
                                 newRow.Cells[1].Value = rdr["CALLSIGN_IN"].ToString();
                                 newRow.Cells[2].Value = rdr["FREQUENCY"].ToString();
                                 newRow.Cells[3].Value = rdr["MODE"].ToString();

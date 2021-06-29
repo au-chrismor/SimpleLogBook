@@ -54,9 +54,17 @@ namespace SimpleLogBook
         }
         public String GetDataDir()
         {
-            String ProgDataDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData);
-            String DataDir = ProgDataDirectory + "\\" + "SimpleLogBook";
+            String DataDir;
 
+            if (this.UserAppDataStore())
+            {
+                String ProgDataDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData);
+                DataDir = ProgDataDirectory + "\\" + "SimpleLogBook";
+            }
+            else
+            {
+                DataDir = Directory.GetCurrentDirectory();
+            }
             return DataDir;
         }
 
@@ -113,7 +121,7 @@ namespace SimpleLogBook
                     String myCallSign = ConfigurationManager.AppSettings.Get("MyCallSign");
 
                     cmd = new SQLiteCommand(con);
-                    cmd.CommandText = "CREATE TABLE ENTRY (ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, ENTRY_DATE TIMESTAMP NOT NULL, CALLSIGN_OUT VARCHAR(255), CALLSIGN_IN VARCHAR(255) NOT NULL, FREQUENCY DECIMAL(10,4) NOT NULL DEFAULT 1.0, MODE VARCHAR(32) NULL, POWER INTEGER NOT NULL DEFAULT 0, SIGNAL_IN VARCHAR(32) NULL, SIGNAL_OUT VARCHAR(32) NULL, CONTACT_NAME VARCHAR(255) NULL, CONTACT_LOC VARCHAR(255) NULL, COMMENT VARCHAR(255) NULL)";
+                    cmd.CommandText = "CREATE TABLE ENTRY (ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, ENTRY_DATE DATE NOT NULL, CALLSIGN_OUT VARCHAR(255), CALLSIGN_IN VARCHAR(255) NOT NULL, FREQUENCY DECIMAL(10,4) NOT NULL DEFAULT 1.0, MODE VARCHAR(32) NULL, POWER INTEGER NOT NULL DEFAULT 0, SIGNAL_IN VARCHAR(32) NULL, SIGNAL_OUT VARCHAR(32) NULL, CONTACT_NAME VARCHAR(255) NULL, CONTACT_LOC VARCHAR(255) NULL, COMMENT VARCHAR(255) NULL)";
                     cmd.ExecuteNonQuery();
                     cmd.CommandText = "CREATE INDEX IX_ENTRY_001 ON ENTRY(ENTRY_DATE)";
                     cmd.ExecuteNonQuery();
@@ -123,7 +131,7 @@ namespace SimpleLogBook
                     cmd.ExecuteNonQuery();
 
                     LogEntry le = new LogEntry(myCallSign);
-                    le.EntryDate = DateTime.UtcNow;
+                    le.EntryDate = DateTime.UtcNow.Date;
                     le.CallSignOut = myCallSign;
                     le.CallSignIn = "VK2DAY";
                     le.Frequency = Convert.ToDouble(14.123);
@@ -136,7 +144,7 @@ namespace SimpleLogBook
                     le.Comments = "1st Contact";
                     le.Save();
 
-                    le.EntryDate = DateTime.UtcNow;
+                    le.EntryDate = DateTime.UtcNow.Date;
                     le.CallSignOut = myCallSign;
                     le.CallSignIn = "VK2AOR";
                     le.Frequency = Convert.ToDouble(7.456);
@@ -162,6 +170,13 @@ namespace SimpleLogBook
         {
             String CallSign = ConfigurationManager.AppSettings.Get("MyCallSign");
             return CallSign;
+        }
+
+        public Boolean UserAppDataStore()
+        {
+            Boolean ret = false;
+            ret = Convert.ToBoolean(ConfigurationManager.AppSettings.Get("StoreInUserAppData"));
+            return ret;
         }
     }
 }
