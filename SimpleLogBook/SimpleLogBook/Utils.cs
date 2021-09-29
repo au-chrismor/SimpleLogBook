@@ -129,9 +129,9 @@ namespace SimpleLogBook
                     cmd.ExecuteNonQuery();
                     cmd.CommandText = "CREATE INDEX IX_ENTRY_003 ON ENTRY(CALLSIGN_IN)";
                     cmd.ExecuteNonQuery();
-
+/*
                     LogEntry le = new LogEntry(myCallSign);
-                    le.EntryDate = DateTime.UtcNow.Date;
+                    le.EntryDate = DateTime.Now;
                     le.CallSignOut = myCallSign;
                     le.CallSignIn = "VK2DAY";
                     le.Frequency = Convert.ToDouble(14.123);
@@ -144,7 +144,7 @@ namespace SimpleLogBook
                     le.Comments = "1st Contact";
                     le.Save();
 
-                    le.EntryDate = DateTime.UtcNow.Date;
+                    le.EntryDate = DateTime.Now;
                     le.CallSignOut = myCallSign;
                     le.CallSignIn = "VK2AOR";
                     le.Frequency = Convert.ToDouble(7.456);
@@ -156,6 +156,7 @@ namespace SimpleLogBook
                     le.RemoteLocation = "Gosford";
                     le.Comments = "Not a real entry";
                     le.Save();
+*/
                 }
                 catch (Exception ex)
                 {

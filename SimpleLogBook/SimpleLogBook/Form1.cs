@@ -21,16 +21,11 @@ namespace SimpleLogBook
             this.Text = "Log for " + utils.GetMyCallSign();
             this.toolStripStatusLabel1.Text = utils.GetDataFile();
             this.FillDataGrid();
+            this.PopulateDataGrid();
         }
 
         private void FillDataGrid()
         {
-            SQLiteConnection conn = null;
-            SQLiteCommand cmd = null;
-            SQLiteDataReader rdr = null;
-            DateTime parsedDate;
-            String[] dtFormats = { "dd/MM/yyyy hh:mm:ss tt" };
-
             this.dataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.Navy;
             this.dataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
             this.dataGridView1.ColumnHeadersDefaultCellStyle.Font = new Font(this.dataGridView1.Font, FontStyle.Bold);
@@ -47,6 +42,17 @@ namespace SimpleLogBook
 
             this.dataGridView1.ReadOnly = true;
 
+        }
+
+        private void PopulateDataGrid()
+        {
+            SQLiteConnection conn = null;
+            SQLiteCommand cmd = null;
+            SQLiteDataReader rdr = null;
+            DateTime parsedDate;
+            String[] dtFormats = { "dd/MM/yyyy hh:mm:ss tt" };
+
+
             Utils util = new Utils();
             conn = util.OpenDatabase();
 
@@ -56,6 +62,20 @@ namespace SimpleLogBook
                         rdr = cmd.ExecuteReader();
                         if(rdr.HasRows)
                         {
+                            do
+                            {
+                                foreach (DataGridViewRow row in this.dataGridView1.Rows)
+                                {
+                                    try
+                                    {
+                                        dataGridView1.Rows.Remove(row);
+                                    }
+                                    catch (Exception)
+                                    {
+                                    }
+                                }
+                            } while (this.dataGridView1.Rows.Count > 1);
+
                             while (rdr.Read())
                             {
                                 DataGridViewRow newRow = new DataGridViewRow();
@@ -83,6 +103,14 @@ namespace SimpleLogBook
             conn.Dispose();
 
             this.dataGridView1.Refresh();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Form2 newEntry = new Form2();
+            newEntry.ShowDialog();
+            newEntry.Dispose();
+            this.PopulateDataGrid();
         }
     }
 }
